@@ -30,18 +30,19 @@ public class Homework4 {
     @Test
     public void daysTask(){
         driver.get("http://samples.gwtproject.org/samples/Showcase/Showcase.html#!CwCheckBox");
-        List<WebElement> l1 = driver.findElements(By.cssSelector(".gwt-CheckBox>label"));
+        List<WebElement> days = driver.findElements(By.cssSelector(".gwt-CheckBox>label"));
+        List<WebElement> checkboxes = driver.findElements(By.cssSelector(".gwt-CheckBox>input"));
         Random random = new Random();
         int count = 0;
         while(count<3){
-            int index = random.nextInt(l1.size());
-            if(l1.get(index).isEnabled()){
-                l1.get(index).click();
-                if(l1.get(index).getText().equals("Friday")){
+            int index = random.nextInt(days.size());
+            if(checkboxes.get(index).isEnabled()){
+                days.get(index).click();
+                if(days.get(index).getText().equals("Friday")){
                     count++;
                 }
-                System.out.println(l1.get(index).getText());
-                l1.get(index).click();
+                System.out.println(days.get(index).getText());
+                days.get(index).click();
             }
         }
     }
