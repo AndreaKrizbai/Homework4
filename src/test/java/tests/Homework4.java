@@ -1,6 +1,7 @@
 package tests;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -237,12 +238,31 @@ public class Homework4 {
 
     @Test
     public void cheapSpoons(){
-
+        driver.get("https://www.amazon.com/");
+        driver.findElement(By.id("twotabsearchtextbox")).sendKeys("wooden spoon");
+        driver.findElement(By.xpath("//span[@id='nav-search-submit-text']//following-sibling::input")).click();
+        //((JavascriptExecutor) driver).executeScript("window.scrollBy(0, 500)");
+        driver.findElement(By.xpath("//div[@id='priceRefinements']//ul/li/span/a/span")).click();
+        List<String>prices = new ArrayList<>();
+        List<WebElement>price = driver.findElements(By.xpath("//span[@class='a-price']/span[@class='a-offscreen']"));
+        double max = 0.0;
+        for (int i = 1; i < price.size(); i++) {
+            String p = driver.findElement(By.xpath("(//span[@class='a-price']/span[2]/span[2])[" + i + "]")).getText() +
+                    "." + driver.findElement(By.xpath("(//span[@class='a-price']/span[2]/span[3])[" + i + "]")).getText();
+            prices.add(p);
+            double pp = Double.parseDouble(p);
+            System.out.println(pp);
+            if(pp>max){
+                max = pp;
+            }
+        }
+        Assert.assertTrue(max<25.00);
     }
 
     @AfterMethod
     public void teardown(){
         driver.quit();
     }
+
 }
 
