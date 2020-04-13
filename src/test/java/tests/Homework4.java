@@ -11,6 +11,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -101,10 +104,80 @@ public class Homework4 {
                 Assert.assertEquals(d.getOptions().size(), 30);
             }
         }
+    }
+
+    @Test
+    public void department_sort(){
+        driver.get("https://www.amazon.com/");
+        Assert.assertEquals(driver.findElement(By.className("nav-search-label")).getText(),"All");
+        List<WebElement> list = new Select(driver.findElement(By.id("searchDropdownBox"))).getOptions();
+        boolean notAlphabetOrder = false;
+        for (int i = 0; i < list.size()-1; i++) {
+            if(list.get(i).getText().compareTo(list.get(i+1).getText())>0){
+                notAlphabetOrder=true;
+                break;
+            }
+        }
+        Assert.assertTrue(notAlphabetOrder);
+    }
+
+    @Test
+    public void mainDeps(){
+        driver.get("https://www.amazon.com/gp/site-directory");
+        List<WebElement> mainDep= driver.findElements(By.tagName("h2"));
+        List<WebElement>allDep= new Select(driver.findElement(By.id("searchDropdownBox"))).getOptions();
+        Set<String> mainDepS = new HashSet<>();
+        Set<String>allDepS = new HashSet<>();
+        for(WebElement each : mainDep){
+            mainDepS.add(each.getText());
+        }
+        for(WebElement each : allDep){
+            allDepS.add(each.getText());
+        }
+
+        int count = 0;
+        for(String each : mainDepS){
+            if(!allDepS.contains(each)){
+                System.out.println("This main department is not in All: " + each);
+                count++;
+            }
+        }
+        System.out.println();
+        System.out.println(count + " out of " + mainDepS.size() +
+                " main departments are not in All");
+        Assert.assertTrue(allDepS.containsAll(mainDepS));
 
     }
 
+    @Test
+    public void links(){
+        driver.get("https://www.w3schools.com/");
+        List<WebElement>tagA = driver.findElements(By.tagName("a"));
+        for(WebElement each : tagA){
+            if(each.isDisplayed()){
+                System.out.println(each.getText());
+                System.out.println(each.getAttribute("href"));
+            }
+        }
+    }
 
+    @Test
+    public void validLinks() {
+        driver.get("https://www.selenium.dev/documentation/en/");
+        List<WebElement> links = driver.findElements(By.tagName("a"));
+        for (int i = 0; i < links.size(); i++) {
+            String href = links.get(i).getAttribute("href");
+            try {
+                URL url = new URL(href);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.connect();
+                Assert.assertTrue(httpURLConnection.getResponseCode()==200);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @AfterMethod
     public void teardown(){
