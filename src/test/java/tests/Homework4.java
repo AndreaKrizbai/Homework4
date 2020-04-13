@@ -179,6 +179,44 @@ public class Homework4 {
         }
     }
 
+    @Test
+    public void cart() {
+        driver.get("https://www.amazon.com/");
+        driver.findElement(By.id("twotabsearchtextbox")).sendKeys("wooden spoon");
+        driver.findElement(By.xpath("//span[@id='nav-search-submit-text']//following-sibling::input")).click();
+        List<WebElement>price = driver.findElements(By.xpath("//span[@class='a-price']/span[@class='a-offscreen']"));
+        int x = new Random().nextInt(price.size());
+        x = x==0 ? 1 : x;
+        String originName = driver.findElement(By.xpath("(//span[@class='a-size-base-plus a-color-base a-text-normal'])["+x+"]")).getText();
+        String originPrice = "$"+driver.findElement(By.xpath("(//span[@class='a-price']/span[2]/span[2])["+x+"]")).getText()+
+                "."+driver.findElement(By.xpath("(//span[@class='a-price']/span[2]/span[3])[\"+x+\"]")).getText();
+
+        driver.findElement(By.xpath("(//span[@class='a-price-fraction'])["+x+"]")).click();
+        //Assert.assertEquals(driver.findElement(By.xpath("//span[@id='a-autoid-0-announce']/span[2]")).getText(),"1");
+        Assert.assertEquals(driver.findElement(By.xpath("//span[text()='Qty:']/following-sibling::span")).getText(),"1");
+        Assert.assertEquals(driver.findElement(By.id("productTitle")).getText(), originName);
+        Assert.assertEquals(driver.findElement(By.id("priceblock_ourprice")).getText(), originPrice);
+        Assert.assertTrue(driver.findElement(By.id("add-to-cart-button")).isDisplayed());
+    }
+
+    @Test
+    public void prime(){
+        driver.get("https://www.amazon.com/");
+        driver.findElement(By.id("twotabsearchtextbox")).sendKeys("wooden spoon");
+        driver.findElement(By.xpath("//span[@id='nav-search-submit-text']//following-sibling::input")).click();
+        String firstPrimeName = driver.findElement(By.xpath("(//i[@aria-label='Amazon Prime']/../../../../../..//h2)[1]")).getText();
+        driver.findElement(By.xpath("//i[@class='a-icon a-icon-prime a-icon-medium']/../div/label/i")).click();
+        String newPrimeName = driver.findElement(By.xpath("(//i[@aria-label='Amazon Prime']/../../../../../..//h2)[1]")).getText();
+        Assert.assertEquals(newPrimeName, firstPrimeName);
+        driver.findElement(By.xpath("//div[@id='brandsRefinements']//ul/li[last()]//i")).click();
+        String newBrandName = driver.findElement(By.xpath("(//i[@aria-label='Amazon Prime']/../../../../../..//h2)[1]")).getText();
+        System.out.println(firstPrimeName);
+        System.out.println(newPrimeName);
+        System.out.println(newBrandName);
+        Assert.assertNotEquals(newBrandName, firstPrimeName);
+    }
+
+
     @AfterMethod
     public void teardown(){
         driver.quit();
