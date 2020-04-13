@@ -216,6 +216,29 @@ public class Homework4 {
         Assert.assertNotEquals(newBrandName, firstPrimeName);
     }
 
+    @Test
+    public void moreSpoons(){
+        driver.get("https://www.amazon.com/");
+        driver.findElement(By.id("twotabsearchtextbox")).sendKeys("wooden spoon");
+        driver.findElement(By.xpath("//span[@id='nav-search-submit-text']//following-sibling::input")).click();
+        List<WebElement>l1 = driver.findElements(By.xpath("//div[@id='brandsRefinements']//ul/li/span/a/span"));
+        List<String>s1=new ArrayList<>();
+        for(WebElement each : l1){
+            s1.add(each.getText());
+        }
+        driver.findElement(By.xpath("//i[@class='a-icon a-icon-prime a-icon-medium']/../div/label/i")).click();
+        List<WebElement>l2 = driver.findElements(By.xpath("//div[@id='brandsRefinements']//ul/li/span/a/span"));
+        List<String>s2=new ArrayList<>();
+        for(WebElement each : l2){
+            s2.add(each.getText());
+        }
+        Assert.assertEquals(s2,s1);
+    }
+
+    @Test
+    public void cheapSpoons(){
+
+    }
 
     @AfterMethod
     public void teardown(){
